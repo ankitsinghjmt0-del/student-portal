@@ -1,0 +1,61 @@
+<user>
+    <user1>
+        <username>aarav_sharma</username>
+        <password>aarav@123</password>
+        <class>10-A</class>
+        <subjects>
+            <maths>85</maths>
+            <science>78</science>
+            <english>82</english>
+        </subjects>
+        <avg>81.67</avg>
+    </user1>
+
+    <user1>
+        <username>priya_verma</username>
+        <password>priya@456</password>
+        <class>10-A</class>
+        <subjects>
+            <maths>92</maths>
+            <science>88</science>
+            <english>90</english>
+        </subjects>
+        <avg>90.00</avg>
+    </user1>
+
+    <user1>
+        <username>rohan_gupta</username>
+        <password>rohan@789</password>
+        <class>10-B</class>
+        <subjects>
+            <maths>70</maths>
+            <science>65</science>
+            <english>75</english>
+        </subjects>
+        <avg>70.00</avg>
+    </user1>
+
+    <user1>
+        <username>sneha_singh</username>
+        <password>sneha@321</password>
+        <class>10-B</class>
+        <subjects>
+            <maths>88</maths>
+            <science>91</science>
+            <english>84</english>
+        </subjects>
+        <avg>87.67</avg>
+    </user1>
+
+    <user1>
+        <username>karan_mehta</username>
+        <password>karan@654</password>
+        <class>10-C</class>
+        <subjects>
+            <maths>60</maths>
+            <science>72</science>
+            <english>68</english>
+        </subjects>
+        <avg>66.67</avg>
+    </user1>
+</user>

@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Student Portal</title>
+    <style>
+        /* Student Portal styles */
+
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 16px;
+            background-color: #f0f0f0;
+            color: black;
+            margin: 0;
+        }
+
+
+        /* ---------- buttons ---------- */
+        button {
+            padding: 6px 12px;
+            background-color: #3366cc;
+            color: white;
+            border: 1px solid #224488;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #224488;
+        }
+
+        /* ---------- navbar ---------- */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 10;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #333;
+            color: white;
+            box-sizing: border-box;
+        }
+
+        .nav-title {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .logout {
+            color: white;
+            margin-left: 10px;
+        }
+
+        .logout:hover {
+            color: yellow;
+        }
+
+        /* ---------- main page ---------- */
+        .container {
+            padding: 70px 20px 20px 20px;
+        }
+
+        /* cards in a row using flexbox */
+        .cards {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .card {
+            position: relative;
+            width: 200px;
+            padding: 10px;
+            background-color: white;
+            border: 1px solid gray;
+            border-radius: 5px;
+            margin: 5px;
+        }
+
+        .card:hover {
+            background-color: #ddeeff;
+        }
+
+        .top-card {
+            border: 2px solid green;
+        }
+
+        /* little badge on top card (absolute inside relative) */
+        .top-card::after {
+            content: "TOP";
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background-color: green;
+            color: white;
+            font-size: 12px;
+            padding: 2px 5px;
+            z-index: 1;
+        }
+
+        .table-section {
+            margin-top: 20px;
+        }
+
+        /* ---------- table ---------- */
+        table {
+            width: 100%;
+            margin-top: 10px;
+            border-collapse: collapse;
+            background-color: white;
+        }
+
+        th, td {
+            border: 1px solid gray;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #cccccc;
+        }
+
+        tbody tr:hover {
+            background-color: #ffffcc;
+        }
+
+        .top-row {
+            background-color: #ccffcc;
+            font-weight: bold;
+        }
+
+        .low-marks {
+            color: red;
+        }
+
+        /* ---------- dark mode ---------- */
+        body.dark {
+            background-color: #222;
+            color: white;
+        }
+
+        body.dark .card,
+        body.dark table {
+            background-color: #333;
+            color: white;
+            border-color: #888;
+        }
+
+        body.dark th {
+            background-color: #555;
+        }
+
+        body.dark th,
+        body.dark td {
+            border-color: #888;
+        }
+
+        body.dark .card:hover {
+            background-color: #444;
+        }
+
+        body.dark tbody tr:hover {
+            background-color: #555;
+        }
+
+        body.dark .top-row {
+            background-color: #1d5c1d;
+        }
+
+        body.dark .low-marks {
+            color: #ff7777;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="navbar" id="navbar">
+        <span class="nav-title">Student Portal</span>
+        <span id="welcomeText"></span>
+        <div>
+            <button id="themeBtn">Dark Mode</button>
+            <a href="index.html" class="logout">Logout</a>
+        </div>
+    </div>
+
+    <div class="container">
+
+        <h1 id="mainHeading">Student Dashboard</h1>
+        <button id="headingBtn">Change Heading</button>
+
+        <!-- cards -->
+        <div class="cards">
+            <div class="card">
+                <h3>Total Students</h3>
+                <p id="totalStudents">-</p>
+            </div>
+            <div class="card">
+                <h3>Average Marks</h3>
+                <p id="avgMarks">-</p>
+            </div>
+            <div class="card top-card" id="topCard">
+                <h3>Top Student</h3>
+                <p id="topStudent">-</p>
+            </div>
+        </div>
+
+        <!-- table section -->
+        <div class="table-section">
+            <h2>Student Marks</h2>
+            <button id="toggleBtn">Hide Table</button>
+            <button id="reloadBtn">Reload Data</button>
+
+            <div id="tableArea">
+                <table id="studentTable">
+                    <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th>Name</th>
+                            <th>Course</th>
+                            <th>Semester</th>
+                            <th>Marks</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- rows are added by JavaScript from students.xml -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+// Portal page script
+// Flow: students.xml -> fetch() -> DOMParser -> JavaScript -> DOM -> HTML
+
+var tableBody = document.getElementById("tableBody");
+var tableArea = document.getElementById("tableArea");
+var toggleBtn = document.getElementById("toggleBtn");
+var reloadBtn = document.getElementById("reloadBtn");
+var headingBtn = document.getElementById("headingBtn");
+var themeBtn = document.getElementById("themeBtn");
+
+// show the username from the url
+var params = new URLSearchParams(window.location.search);
+var userName = params.get("user");
+if (userName) {
+    document.getElementById("welcomeText").innerHTML = "Welcome, " + userName;
+} else {
+    // nobody logged in, send back to login
+    window.location.href = "index.html";
+}
+
+// ---------- load data using AJAX ----------
+function loadStudents() {
+    tableBody.innerHTML = "<tr><td colspan='5'>Loading...</td></tr>";
+
+    fetch("students.xml")
+        .then(function (response) {
+            return response.text();
+        })
+        .then(function (xmlText) {
+            var parser = new DOMParser();
+            var xmlDoc = parser.parseFromString(xmlText, "text/xml");
+            var students = xmlDoc.getElementsByTagName("student");
+
+            tableBody.innerHTML = "";
+
+            var total = 0;
+            var topName = "";
+            var topMarks = -1;
+
+            for (var i = 0; i < students.length; i++) {
+                var name = students[i].getElementsByTagName("name")[0].textContent;
+                var course = students[i].getElementsByTagName("course")[0].textContent;
+                var sem = students[i].getElementsByTagName("semester")[0].textContent;
+                var marks = parseInt(students[i].getElementsByTagName("marks")[0].textContent);
+
+                total = total + marks;
+
+                if (marks > topMarks) {
+                    topMarks = marks;
+                    topName = name;
+                }
+
+                // create the row using JS
+                var row = document.createElement("tr");
+                var values = [i + 1, name, course, sem, marks];
+
+                for (var j = 0; j < values.length; j++) {
+                    var cell = document.createElement("td");
+                    cell.innerHTML = values[j];
+                    row.appendChild(cell);
+                }
+
+                // red text if marks are low
+                if (marks < 60) {
+                    row.classList.add("low-marks");
+                }
+
+                tableBody.appendChild(row);
+            }
+
+            // update the cards
+            document.getElementById("totalStudents").innerHTML = students.length;
+            document.getElementById("avgMarks").innerHTML = (total / students.length).toFixed(1);
+            document.getElementById("topStudent").innerHTML = topName + " (" + topMarks + ")";
+
+            // highlight the top student's row
+            var rows = tableBody.getElementsByTagName("tr");
+            for (var k = 0; k < rows.length; k++) {
+                var nameCell = rows[k].getElementsByTagName("td")[1];
+                if (nameCell.innerHTML === topName) {
+                    rows[k].classList.add("top-row");
+                }
+            }
+        })
+        .catch(function (error) {
+            tableBody.innerHTML = "<tr><td colspan='5'>Could not load students.xml</td></tr>";
+            console.log(error);
+        });
+}
+
+// ---------- show / hide table ----------
+toggleBtn.addEventListener("click", function () {
+    if (tableArea.style.display === "none") {
+        tableArea.style.display = "block";
+        toggleBtn.innerHTML = "Hide Table";
+    } else {
+        tableArea.style.display = "none";
+        toggleBtn.innerHTML = "Show Table";
+    }
+});
+
+// ---------- change heading ----------
+var headingChanged = false;
+headingBtn.addEventListener("click", function () {
+    var heading = document.getElementById("mainHeading");
+    if (headingChanged === false) {
+        heading.innerHTML = "Welcome to the Student Portal!";
+        heading.style.color = "green";
+        headingChanged = true;
+    } else {
+        heading.innerHTML = "Student Dashboard";
+        heading.style.color = "";
+        headingChanged = false;
+    }
+});
+
+// ---------- light / dark mode ----------
+themeBtn.addEventListener("click", function () {
+    document.body.classList.toggle("dark");
+
+    if (document.body.classList.contains("dark")) {
+        themeBtn.innerHTML = "Light Mode";
+    } else {
+        themeBtn.innerHTML = "Dark Mode";
+    }
+});
+
+// ---------- reload button ----------
+reloadBtn.addEventListener("click", loadStudents);
+
+// load data when page opens
+loadStudents();
+    </script>
+</body>
+</html>

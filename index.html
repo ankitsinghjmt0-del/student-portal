@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+
+    <style>
+        .LoginBody{
+            display: flex;
+            justify-content: center;
+            align-items:center;
+            height: 80vh;
+            
+            background-color: antiquewhite;
+        }
+
+        .LoginBox{
+            background-color:bisque;
+            width: 450px;
+            height: 320px;
+            
+            border: 2px solid brown;
+            border-radius: 8px;
+        }
+
+        .LoginBox h2{
+            padding: 6px;
+            text-align: center;
+            
+        }
+
+        .LoginBox label{
+            margin: 10px;
+            font-size: larger;
+        }
+
+        .LoginBox input{
+            margin: 10px;
+            padding: 5px;
+            width: 92%;
+        }
+
+        .LoginBox button{
+            margin: 10px;
+            margin-left: 10px;
+            padding: 5px;
+            width: 95%;
+            background-color: rgb(208, 46, 65);
+            border: 5px;
+            border-color: black;
+            border-radius: 5px;
+            color: white;
+        }
+
+        .LoginBox button:hover{
+            background-color:  brown;
+        }
+
+        #message{
+            text-align: center;
+            margin: 10px;
+        }
+
+    </style>
+</head>
+<body class="LoginBody">
+    <div class="LoginBox">
+        <h2>Student Login Portal</h2>
+
+        <label for="username">UserName :</label> <br>
+        <input type="text" id="username" placeholder="Enter UserName">
+
+        <label for="password">Password : </label>
+        <input type="password" id="password" placeholder="Enter Password">
+
+        <button onclick="login()">Login</button>
+
+        <p id="message"></p>
+        
+
+    <script>
+    let xml;
+
+    fetch("user.xml")
+
+    .then(response => response.text())
+
+    .then(data => {
+
+        let parser = new DOMParser();
+
+        xml = parser.parseFromString(data, "text/html");
+
+    });
+
+
+        function login(){
+        let Username = document.getElementById("username").value;
+        let Password = document.getElementById("password").value;
+
+        let users = xml.getElementsByTagName("user1");
+
+        if( Username == "" || Password == ""){
+            document.getElementById("message").innerHTML = "Please fill both fields!!";
+            document.getElementById("message").style.color = "red";
+        }
+
+        let found = false;
+
+        for( let i = 0 ; i < users.length ; i++){
+    
+            let name = users[i].getElementsByTagName("username")[0].textContent;
+            let pass = users[i].getElementsByTagName("password")[0].textContent;
+        
+        
+
+
+         if(Username == name && Password == pass){
+            found = true;
+            break;
+        }
+
+        
+    }
+
+    if(found){
+        document.getElementById("message").innerHTML = "Correct password...Redirecting to Student Dashboard";
+        document.getElementById("message").style.color = "green";
+
+        window.location.href = "http://127.0.0.1:5500/student-portal/portal.html?user=student"
+    }
+
+    else{
+        document.getElementById("message").innerHTML = "Invalid Credentials";
+        document.getElementById("message").style.color = "red";
+    }
+
+
+
+    }
+
+    </script>
+</body>
+</html>
