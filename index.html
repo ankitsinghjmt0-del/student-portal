@@ -104,6 +104,7 @@
         if( Username == "" || Password == ""){
             document.getElementById("message").innerHTML = "Please fill both fields!!";
             document.getElementById("message").style.color = "red";
+            return;
         }
 
         let found = false;
